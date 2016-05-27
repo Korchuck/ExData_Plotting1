@@ -1,0 +1,28 @@
+## Read data
+
+library(sqldf)
+
+
+
+DATA<-read.csv.sql("household_power_consumption.txt", sep=";",
+                   sql = 'select * from file where Date = "1/2/2007" or Date = "2/2/2007"')
+
+
+## Transform time and date columns
+
+
+dates<-DATA[,1]
+times<-DATA[,2]
+DateTime<-paste(dates,times)
+DateTime<-strptime(DateTime, "%d/%m/%Y %H:%M:%S")
+
+DATA<-cbind(DATA, DateTime)
+DATA<-DATA[,-c(1,2)]
+
+## Plotting
+plot1.png<-png(file ="plot1.png", width=480, height=480, units="px")
+hist(DATA$Global_active_power, col="red", breaks=12, include.lowest=TRUE, xlab="Global Active Power (kilowatts)", 
+               ylab="Frequency", main="Global Active Power", xlim=c(0,6), ylim=c(0,1200))
+
+
+dev.off()
